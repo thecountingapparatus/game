@@ -64,7 +64,7 @@ class FactionMain {
     }
   }
 }
-
+//gwa
 class GlobalInfo {
   constructor() {
     this.factions = {};
