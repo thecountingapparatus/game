@@ -111,7 +111,7 @@ function updateCountLog(text, factionPass) {
   	textLog.shift();
   }
 	for (let i = 0; i < textLog.length; i++) {
-  	if (i != 0) {
+  	if (i !== 0 || i !== "0") {
     	textString += "<br>";
     }
 		textString += textLog[i];
@@ -120,7 +120,7 @@ function updateCountLog(text, factionPass) {
 }
 
 function updateNextCounts() {
-	for (const [key, value] of Object.entries(globalInfo.factions)) {
+	for (const value of Object.values(globalInfo.factions)) {
 		value.getNextCount();
     document.getElementById(value.name + "Next").innerHTML = "Next: " + value.nextCount + "<br>Milestone: " + Math.ceil(value.getMilestoneReq()) + "<br>Current: " + value.count + "<br>CurrentM: " + value.milestone;
   }
@@ -129,12 +129,12 @@ function updateNextCounts() {
 function updateMilestoneReduction() {
     //updates milestone scaling reduction on each milestone
 	let totalMilestones = 0;
-  for (const [key, value] of Object.entries(globalInfo.factions)) {
+  for (const value of Object.values(globalInfo.factions)) {
   	totalMilestones += value.milestone;
   }
   milestoneReduction = Math.pow(1/(Math.log(totalMilestones+2)), 0.5);
-  document.getElementById("milestoneReductionText").innerHTML = "Milestone reduction: " + milestoneReduction;
-  for (const [key, value] of Object.entries(globalInfo.factions)) {
+  document.getElementById("milestoneReductionText").innerHTML = "Milestone reduction: " + milestoneReduction.toString(2);
+  for (const value of Object.values(globalInfo.factions)) {
   	value.checkMilestoneReq();
   }
 }
