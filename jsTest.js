@@ -119,7 +119,7 @@ function updateCountLog(text, factionPass) {
 function updateNextCounts() {
 	for (const [key, value] of Object.entries(globalInfo.factions)) {
 		value.getNextCount();
-    document.getElementById(value.name + "Next").innerHTML = "Next: " + value.nextCount + "<br>Milestone: " + value.getMilestoneReq() + "<br>Current: " + value.count + "<br>CurrentM: " + value.milestone;
+    document.getElementById(value.name + "Next").innerHTML = "Next: " + value.nextCount + "<br>Milestone: " + Math.ceil(value.getMilestoneReq()) + "<br>Current: " + value.count + "<br>CurrentM: " + value.milestone;
   }
 }
 
