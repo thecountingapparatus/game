@@ -12,7 +12,7 @@ class FactionMain {
     this.globalInfo.factions[this.name] = this;
     console.log("Made new faction " + this.name);
   }
-
+// gwa test
   parseCount(countText) {
     /* console.log("checking count is parseable") */
     ;
@@ -82,7 +82,37 @@ class MetaFaction extends FactionMain {
   	this.nextCount = this.count + this.globalInfo.factions[FactionNames.Classic].milestone;
   }
 }
-
+class LetterFaction extends FactionMain {
+  constructor(name, milestoneFunction, globalInfo) {
+    super(name, milestoneFunction, globalInfo);
+  }
+  getNextCount(){
+    this.nextCount = this.NumberToLetter(this.LetterToNumber(this.count)+1)
+  }
+  NumberToLetter(n){
+    let str = ""
+    while(n>0){
+      let mod = n%26
+      if(mod==0){
+        mod = 26
+        n-=26
+      }
+      str = String.fromCharCode(mod+64)+str
+      n=Math.floor(n/26)
+    }
+    return str
+  }
+  LetterToNumber(a){
+    let num =0
+    while(a.length>0){
+      num*=26
+      let y = a.codePointAt(0)-64
+      num+=y
+      a=a.slice(1)
+    }
+    return num
+  }
+}
 const FactionNames = {
   Classic: "Classic",
   Tree: "Tree",
@@ -145,4 +175,6 @@ const globalInfo = new GlobalInfo();
 const basicCount = new FactionMain("Classic", ((x) => Math.pow(10, Math.pow(x, milestoneReduction))), globalInfo);
 const treeCount = new FactionMain("Tree", ((x) => Math.pow(x, Math.pow(2, milestoneReduction))), globalInfo);
 const countCount = new MetaFaction("MetaCount", ((x) => Math.pow(2, Math.pow(2, Math.pow(x, milestoneReduction)))), globalInfo);
+const baseCount = new FactionMain("Base", ((x) => Math.pow(x+1, Math.pow(x+2, milestoneReduction))), globalInfo)
+const letterCount = new LetterFaction("Letter", ((x) => (Math.pow(26, Math.pow(x+1, milestoneReduction))-1)/25))
 updateNextCounts();
