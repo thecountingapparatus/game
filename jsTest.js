@@ -85,6 +85,7 @@ class MetaFaction extends FactionMain {
 
 const FactionNames = {
   Classic: "Classic",
+  Tree: "Tree",
   Meta: "MetaCount",
 }
 
@@ -141,6 +142,7 @@ function updateMilestoneReduction() {
 
 let milestoneReduction = 1;
 const globalInfo = new GlobalInfo();
-const basicCount = new FactionMain("Classic", ((x) => Math.pow(2, Math.pow(x, milestoneReduction))), globalInfo);
+const basicCount = new FactionMain("Classic", ((x) => Math.pow(10, Math.pow(x, milestoneReduction))), globalInfo);
+const treeCount = new FactionMain("Tree", ((x) => Math.pow(x, Math.pow(2, milestoneReduction))), globalInfo);
 const countCount = new MetaFaction("MetaCount", ((x) => Math.pow(2, Math.pow(2, Math.pow(x, milestoneReduction)))), globalInfo);
 updateNextCounts();
