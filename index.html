@@ -1,5 +1,37 @@
 <!DOCTYPE html>
 <html>
-  <h1>The Counting Apparatus</h1>
-  <p>wip</p>
+  <div class="row">
+    <div class="column">
+      <span>Count</span><br>
+      <text id="textField"></text><br>
+      <input type="text" id="textInput" name="textInput" onkeydown="pressButtonOnEnter(submitButton)">
+      <button id="submitButton" onclick="parseCount(textInput, FactionNames.Classic, textField)">
+        Submit
+      </button><br>
+      <span id="ClassicNext">Next: 1</span>
+    </div>
+
+    <div class="column">
+      <span>MetaCount</span><br>
+      <text id="textField2"></text><br>
+      <input type="text" id="textInput2" name="textInput2" onkeydown="pressButtonOnEnter(submitButton2)">
+      <button id="submitButton2" onclick="parseCount(textInput2, FactionNames.Meta, textField2)">
+        Submit
+      </button><br>
+      <span id="MetaCountNext">Next: 1</span>
+    </div>
+  </div>
+  <br>
+  <span id="milestoneReductionText">Milestone reduction: 1</span>
+
+  <style>
+      .redText
+      {
+          color:red;
+      }
+      .greenText
+      {
+          color:green;
+      }
+  </style>
 </html>
