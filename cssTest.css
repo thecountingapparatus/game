@@ -5,3 +5,10 @@
 .column {
   flex: 50%;
 }
+
+.redText {
+  color:red;
+}
+.greenText {
+  color:green;
+}
