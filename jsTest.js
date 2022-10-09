@@ -134,7 +134,7 @@ function updateMilestoneReduction() {
   	totalMilestones += value.milestone;
   }
   milestoneReduction = Math.pow(1/(Math.log(totalMilestones+2)), 0.5);
-  document.getElementById("milestoneReductionText").innerHTML = "Milestone reduction: " + milestoneReduction.toString(2);
+  document.getElementById("milestoneReductionText").innerHTML = "Milestone reduction: " + milestoneReduction.toFixed(2);
   for (const value of Object.values(globalInfo.factions)) {
   	value.checkMilestoneReq();
   }
