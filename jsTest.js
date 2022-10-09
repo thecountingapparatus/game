@@ -18,6 +18,7 @@ class FactionMain {
   }
 
   checkMilestoneReq() {
+    //checks if milestones have been reached
     const oldMilestones = this.milestone;
     while (this.count >= this.milestoneFunction(this.milestone)) {
       this.milestone++;
@@ -51,6 +52,7 @@ class FactionMain {
   }
 
   checkNewCount(newCount) {
+    //checks if a count is correct
     if (newCount != null && newCount == this.nextCount) {
       this.count = this.nextCount;
       console.log(this.count);
@@ -91,7 +93,7 @@ function pressButtonOnEnter(button) {
 }
 
 function parseCount(text, factionPass, textField) {
-  // check
+  // parses inputs to check if count is correct
   if (text.value != "") {
     const correct = globalInfo.factions[factionPass].checkNewCount(text.value);
     globalInfo.factions[factionPass].textLog.push('<span class="' + (correct ? "greenText" : "redText") + '">' + text.value + "</span>");
@@ -102,6 +104,7 @@ function parseCount(text, factionPass, textField) {
 }
 
 function updateCountLog(text, factionPass) {
+    //logs counts, marking them as correct or incorrect
 	let textString = "";
   const textLog = globalInfo.factions[factionPass].textLog;
   if (textLog.length > 9) {
@@ -124,6 +127,7 @@ function updateNextCounts() {
 }
 
 function updateMilestoneReduction() {
+    //updates milestone scaling reduction on each milestone
 	let totalMilestones = 0;
   for (const [key, value] of Object.entries(globalInfo.factions)) {
   	totalMilestones += value.milestone;
