@@ -55,7 +55,7 @@ class FactionMain {
 
   checkNewCount(newCount) {
     //checks if a count is correct
-    if (newCount !== undefined && newCount === this.nextCount) {
+    if (newCount !== undefined && newCount == this.nextCount) {
       this.count = this.nextCount;
       console.log(this.count);
       this.checkMilestoneReq();
