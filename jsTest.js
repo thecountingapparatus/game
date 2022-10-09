@@ -1,3 +1,5 @@
+"use strict";
+
 class FactionMain {
   constructor(name, milestoneFunction, globalInfo) {
     this.name = name;
@@ -34,7 +36,7 @@ class FactionMain {
 	}
 
   incrementCount(amount, countText) {
-    if (this.parseCount(countText) != null) {
+    if (this.parseCount(countText) !== undefined) {
       this.count += amount;
       console.log(this.count);
       this.checkMilestoneReq();
@@ -53,7 +55,7 @@ class FactionMain {
 
   checkNewCount(newCount) {
     //checks if a count is correct
-    if (newCount != null && newCount == this.nextCount) {
+    if (newCount !== undefined && newCount === this.nextCount) {
       this.count = this.nextCount;
       console.log(this.count);
       this.checkMilestoneReq();
@@ -64,7 +66,7 @@ class FactionMain {
     }
   }
 }
-//gwa
+
 class GlobalInfo {
   constructor() {
     this.factions = {};
@@ -87,14 +89,14 @@ const FactionNames = {
 }
 
 function pressButtonOnEnter(button) {
-  if (event.key == 'Enter') {
+  if (event.key === 'Enter') {
     button.onclick();
   }
 }
 
 function parseCount(text, factionPass, textField) {
   // parses inputs to check if count is correct
-  if (text.value != "") {
+  if (text.value !== "") {
     const correct = globalInfo.factions[factionPass].checkNewCount(text.value);
     globalInfo.factions[factionPass].textLog.push('<span class="' + (correct ? "greenText" : "redText") + '">' + text.value + "</span>");
     text.value = "";
@@ -111,9 +113,7 @@ function updateCountLog(text, factionPass) {
   	textLog.shift();
   }
 	for (let i = 0; i < textLog.length; i++) {
-  	if (i !== 0 || i !== "0") {
-    	textString += "<br>";
-    }
+  	if (i !== 0) textString += "<br>"
 		textString += textLog[i];
   }
   text.innerHTML = textString;
