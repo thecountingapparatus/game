@@ -18,8 +18,7 @@ class FactionMain {
   }
 
   checkMilestoneReq() {
-    //checks if milestones have been reached
-    var oldMilestones = this.milestone;
+    const oldMilestones = this.milestone;
     while (this.count >= this.milestoneFunction(this.milestone)) {
       this.milestone++;
       console.log("milestone " + this.milestone + " achieved");
@@ -52,7 +51,6 @@ class FactionMain {
   }
 
   checkNewCount(newCount) {
-    //checks if a count is correct
     if (newCount != null && newCount == this.nextCount) {
       this.count = this.nextCount;
       console.log(this.count);
@@ -93,9 +91,9 @@ function pressButtonOnEnter(button) {
 }
 
 function parseCount(text, factionPass, textField) {
-  // parses inputs to check if count is correct
+  // check
   if (text.value != "") {
-    var correct = globalInfo.factions[factionPass].checkNewCount(text.value);
+    const correct = globalInfo.factions[factionPass].checkNewCount(text.value);
     globalInfo.factions[factionPass].textLog.push('<span class="' + (correct ? "greenText" : "redText") + '">' + text.value + "</span>");
     text.value = "";
     updateCountLog(textField, factionPass);
@@ -104,9 +102,8 @@ function parseCount(text, factionPass, textField) {
 }
 
 function updateCountLog(text, factionPass) {
-  //logs counts, marking them as correct or incorrect
-	var textString = "";
-  var textLog = globalInfo.factions[factionPass].textLog;
+	let textString = "";
+  const textLog = globalInfo.factions[factionPass].textLog;
   if (textLog.length > 9) {
   	textLog.shift();
   }
@@ -127,8 +124,7 @@ function updateNextCounts() {
 }
 
 function updateMilestoneReduction() {
-  //updates milestone scaling reduction on each milestone
-	var totalMilestones = 0;
+	let totalMilestones = 0;
   for (const [key, value] of Object.entries(globalInfo.factions)) {
   	totalMilestones += value.milestone;
   }
@@ -139,7 +135,7 @@ function updateMilestoneReduction() {
   }
 }
 
-var milestoneReduction = 1;
+let milestoneReduction = 1;
 const globalInfo = new GlobalInfo();
 const basicCount = new FactionMain("Classic", ((x) => Math.pow(2, Math.pow(x, milestoneReduction))), globalInfo);
 const countCount = new MetaFaction("MetaCount", ((x) => Math.pow(2, Math.pow(2, Math.pow(x, milestoneReduction)))), globalInfo);
