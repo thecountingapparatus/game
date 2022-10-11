@@ -1,6 +1,7 @@
 import { FactionBase } from "./faction.js";
 import { xxCount } from "./xx.js";
 
+//test
 class CountFaction extends FactionBase {
   //Constructor
   constructor() {
@@ -18,7 +19,8 @@ class CountFaction extends FactionBase {
   }
 
   get rewardOne() {
-    this.milestoneRewardOne = (Math.pow(this.milestones, 2) + this.milestones) / 2;
+    this.milestoneRewardOne =
+      (Math.pow(this.milestones, 2) + this.milestones) / 2;
     return this.milestoneRewardOne - this.rewardUsed;
   }
 
@@ -41,33 +43,32 @@ class CountFaction extends FactionBase {
   }
 
   //Goals & Spire
-  goalCheck(){
-    if(this.milestones >= 5){
+  goalCheck() {
+    if (this.milestones >= 5) {
       this.goals[0] = true;
     }
-    if(this.milestones >= 10){
+    if (this.milestones >= 10) {
       this.goals[1] = true;
     }
-    if(this.rewardUsed >= 10){
+    if (this.rewardUsed >= 10) {
       this.goals[2] = true;
     }
-    if(this.rewardUsed >= 50){
+    if (this.rewardUsed >= 50) {
       this.goals[3] = true;
     }
-    if(this.count >= 1e6){
-      this.goals[4] = true
+    if (this.count >= 1e6) {
+      this.goals[4] = true;
     }
   }
   //test push
-  spireBoost(){
-    if(this.isSpire){
-      treeCount.milestoneReward *= 2;
+  spireBoost() {
+    if (this.isSpire) {
+      //treeCount.milestoneReward *= 2;
       this.milestoneRewardOne *= 2;
-    }/*else{
+    } /*else{
       treeCount.milestoneReward /= 2;
       this.milestoneRewardOne /= 2;
     }*/
   }
-  
 }
 export const basicCount = new CountFaction();
