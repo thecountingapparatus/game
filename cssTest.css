@@ -1,14 +1,13 @@
 .row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 50% 50%;
 }
-
-.column {
-  flex: 50%;
-}
-
 .redText {
   color:red;
 }
 .greenText {
   color:green;
+}
+.center {
+  text-align: center;
 }
