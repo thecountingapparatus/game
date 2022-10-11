@@ -35,11 +35,20 @@ class FactionBase {
     factions[name] = this;
   }
   // abstracts
-  isValidCount(count) {}
-  parseCount(count) {}
-  get nextCount() {}
-  onMilestone() {}
-
+  isValidCount(count); //XX, Ones, Factorial
+  
+  parseCount(count); //XX, Ones, Factorial
+  
+  get nextCount(){} //???
+  
+  onMilestone(); //All Factions
+  
+  
+  goalCheck(); //All Factions
+  
+  spireBoost(); //All Factions
+  
+//defined
   updateMilestones() {
     const oldMilestone = this.milestones;
     while (this.count >= this.milestoneNextAt) {
@@ -65,6 +74,10 @@ class FactionBase {
 
   get milestoneNextAt() {
     return this.msReq(this.milestones);
+  }
+  
+  spireCheck(){
+      isSpire = goals.every(element => element === true);
   }
 }
 class FakeFaction extends FactionBase {
