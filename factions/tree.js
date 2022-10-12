@@ -2,28 +2,43 @@ import { FactionBase } from "./faction.js";
 import { basicCount } from "./count.js";
 import { xxCount } from "./xx.js";
 import { onesCount } from "./ones.js";
-
+import { factions } from "./faction.js";
 class TreeFaction extends FactionBase {
   constructor() {
     super("Tree", (x) => Math.pow(x, Math.pow(2, xxCount.milestoneReduction)));
-    this.milestoneReward = basicCount.unbanMult * this.milestones;
     this.rewardUsed = 0;
-    this.slowmode = 86400;
+    this.goals = [
+      () => this.milestones >= 25,
+      () => this.milestones >= 50,
+      () => this.rewardUsed >= 25,
+      () => this.rewardUsed >= 50,
+      () => this.grid >= 10
+    ];
     this.grid = 0;
   }
 
   //Counts & Milestones
   get nextCount() {
-    this.nextCount = this.count + 1;
-    return this.nextCount;
+    return this.count + 1;
   }
 
-  get milestoneReward() {
-    return this.milestoneReward - this.rewardUsed;
+  doCount(count) {
+    if (this.isCorrectCount(count)) {
+      this.count = this.nextCount;
+      this.updateGrid();
+      this.updateMilestones();
+      this.updateGoals();
+    }
+  }
+
+  get milestoneRewards() {
+    return {
+      one: basicCount.spireEffect * this.milestones
+    };
   }
 
   useReward() {
-    if (this.rewardUsed <= this.milestoneReward) {
+    if (this.rewardUsed <= this.milestoneRewards.one) {
       this.rewardUsed++;
       return true;
     } else {
@@ -31,27 +46,15 @@ class TreeFaction extends FactionBase {
     }
   }
 
-  get slowmodeCheck() {
-    this.slowmode = 86400 * Math.pow(0.75, onesCount.milestones);
-    return this.slowmode;
+  get slowmode() {
+    return 86400 * Math.pow(0.75, onesCount.milestones);
   }
 
-  //Goals & Spire
-  goalCheck() {
-    if (this.milestones >= 25) {
-      this.goals[0] = true;
-    }
-    if (this.milestones >= 50) {
-      this.goals[1] = true;
-    }
-    if (this.rewardUsed >= 25) {
-      this.goals[2] = true;
-    }
-    if (this.rewardUsed >= 50) {
-      this.goals[3] = true;
-    }
-    if (this.grid >= 10) {
-      this.goals[4] = true;
+  updateGrid() {
+    this.grid = Math.ceil(Math.sqrt(this.count));
+
+    for (const value of Object.values(factions)) {
+      value.textBox.length = (this.grid + 1) * (onesCount.milestones + 1);
     }
   }
 }
