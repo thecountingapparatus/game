@@ -1,8 +1,16 @@
 const channels = {};
 
 export class TextChannel {
-  constructor(name, maxMessages, maxLength, extraData, toHTML, inType) {
-    this.name = name; //string
+  constructor(
+    name,
+    realName,
+    maxMessages,
+    maxLength,
+    extraData,
+    toHTML,
+    inType
+  ) {
+    this.realName = realName;
     this.max = maxMessages; //int
     this.length = maxLength; //int
     this.messages = []; //array,string
@@ -24,19 +32,38 @@ export class TextChannel {
       });
     channels[name] = this;
   }
+  changeChannelName(name) {
+    this.invokeHandlers("channelName", name);
+    this.realName = name;
+  }
   deleteMessage(ind) {
     this.messages.splice(ind, 1);
   }
-  onMessage(func) {
-    this.handlers.push(func);
+  on(func, type) {
+    this.handlers.push({
+      type,
+      func
+    });
+  }
+  isSupportedHandler(type, item) {
+    return type === "*" || item.type === type;
+  }
+  invokeHandlers(type, data) {
+    for (const handler of this.handlers.filter((i) =>
+      this.isSupportedHandler(type, i)
+    )) {
+      handler.func(data);
+    }
   }
   unListen() {
     this.handlers = [];
   }
   freeze() {
+    this.invokeHandlers("freeze", true);
     this.isFrozen = true;
   }
   unFreeze() {
+    this.invokeHandlers("freeze", false);
     this.isFrozen = false;
   }
   sendMessage(msg, bot = true) {
@@ -46,11 +73,9 @@ export class TextChannel {
       msg,
       num: this.msgCounter,
       bot,
-      ...this.extraData(msg),
+      ...this.extraData(msg)
     });
-    for (const i of this.handlers) {
-      i(msg);
-    }
+    this.invokeHandlers("message", msg);
     if (this.messages.length > this.max) {
       this.messages.shift();
     }
@@ -73,6 +98,10 @@ class TextChannelDisp extends HTMLElement {
       if (!i.bot) ele.innerHTML += `<sub>#${i.num}</sub>`;
       this.texts.append(ele);
     });
+    [...this.texts.childNodes].at(-1).scrollIntoView({
+      behavior: "smooth",
+      block: "end"
+    });
   }
   sendText() {
     if (this.input.value === "" || this.tooBig || this.textInstance.isFrozen)
@@ -89,25 +118,31 @@ class TextChannelDisp extends HTMLElement {
   connectedCallback() {
     if (!this.isConnected) return;
     this.attachShadow({ mode: "open" });
+    console.log(JSON.stringify(channels), this.getAttribute("name"));
     this.textInstance = channels[this.getAttribute("name")];
     // console.log(this.getAttribute("name"), channels.Chat, this.textInstance);
 
     const wrapper = ce("div");
-    wrapper.innerHTML += `
-      <div style="text-align:center;">${this.textInstance.name}</div>
-    `;
+    const title = ce("div");
     this.texts = ce("div");
     this.input = ce("input");
     const btn = ce("button");
     const txtLength = ce("div");
+
+    title.textAlign = "center";
+    title.innerHTML = this.textInstance.realName;
 
     this.input.type = this.textInstance.inputType;
     this.input.onkeydown = (e) => {
       if (e.key === "Enter") this.sendText();
     };
     this.input.style.width = "calc(100% -  85px)";
-    this.textInstance.updateText = () => this.updateText();
     this.input.style.display = "inline";
+
+    this.textInstance.updateText = () => this.updateText();
+    this.textInstance.on((d) => {
+      title.innerHTML = d;
+    }, "channelName");
 
     btn.onclick = () => this.sendText();
     btn.innerHTML = "Submit";
@@ -120,7 +155,7 @@ class TextChannelDisp extends HTMLElement {
     txtLength.style.textAlign = "right";
 
     //wrapper.style.textAlign = "right"
-    wrapper.append(this.texts, this.input, btn, txtLength);
+    wrapper.append(title, this.texts, this.input, btn, txtLength);
     this.shadowRoot.append(wrapper);
     this.int = setInterval(() => {
       this.input.disabled = this.textInstance.isFrozen;
@@ -134,9 +169,6 @@ class TextChannelDisp extends HTMLElement {
 
   disconnectedCallback() {
     clearInterval(this.int);
-  }
-  constructor() {
-    super();
   }
 }
 

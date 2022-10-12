@@ -1,31 +1,47 @@
 import { FactionBase } from "./faction.js";
 import { xxCount } from "./xx.js";
 
-//test
 class CountFaction extends FactionBase {
   //Constructor
   constructor() {
     super("Classic", (x) =>
       Math.pow(10, Math.pow(x + 1, xxCount.milestoneReduction))
     );
-    this.milestoneRewardOne = 0;
-    this.milestoneRewardTwo = 0; //Letter Stock
-    this.rewardUsed = 0;
+    this.rewardOneUsed = 0;
+    this.spireEffect = 1;
+    this.goals = [
+      () => this.milestones >= 5,
+      () => this.milestones >= 10,
+      () => this.rewardUsed >= 10,
+      () => this.rewardUsed >= 50,
+      () => this.count >= 1e6
+    ];
   }
 
   //Count & Milestones
   get nextCount() {
-    this.nextCount = this.count + Math.max(xxCount.milestones, 1); //To be changed to Effective X
+    return this.count + Math.max(xxCount.effectiveX, 1);
   }
 
-  get rewardOne() {
-    this.milestoneRewardOne =
-      (Math.pow(this.milestones, 2) + this.milestones) / 2;
-    return this.milestoneRewardOne - this.rewardUsed;
+  isCorrectCount(count) {
+    return count === this.nextCount.toString();
+  }
+
+  parseCount(count) {
+    return Number(count);
+  }
+
+  get milestoneRewards() {
+    return {
+      one:
+        (this.spireEffect * (Math.pow(this.milestones, 2) + this.milestones)) /
+        2,
+      two: this.milestones
+    };
   }
 
   useRewardOne() {
-    if (this.rewardUsed <= this.milestoneReward) {
+    if (this.rewardOneUsed < this.milestoneRewards.one) {
       this.rewardUsed++;
       return true;
     } else {
@@ -33,42 +49,14 @@ class CountFaction extends FactionBase {
     }
   }
 
-  get rewardTwo() {
-    this.milestoneRewardTwo = this.milestones;
-  }
-
-  onMilestone() {
-    this.rewardOne();
-    this.rewardTwo();
-  }
-
-  //Goals & Spire
-  goalCheck() {
-    if (this.milestones >= 5) {
-      this.goals[0] = true;
-    }
-    if (this.milestones >= 10) {
-      this.goals[1] = true;
-    }
-    if (this.rewardUsed >= 10) {
-      this.goals[2] = true;
-    }
-    if (this.rewardUsed >= 50) {
-      this.goals[3] = true;
-    }
-    if (this.count >= 1e6) {
-      this.goals[4] = true;
-    }
-  }
-  //test push
   spireBoost() {
     if (this.isSpire) {
-      //treeCount.milestoneReward *= 2;
-      this.milestoneRewardOne *= 2;
-    } /*else{
-      treeCount.milestoneReward /= 2;
-      this.milestoneRewardOne /= 2;
-    }*/
+      this.textBox.changeChannelName("Finite Spire");
+      this.spireEffect = 2;
+    } else {
+      this.textBox.changeChannelName("Classic");
+      this.spireEffect = 1;
+    }
   }
 }
 export const basicCount = new CountFaction();

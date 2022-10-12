@@ -1,21 +1,25 @@
-import { ce, TextChannel } from "./text.js";
-import { escapeHtml } from "./utils.js";
+import { ce, TextChannel } from "../utils/text.js";
+import { escapeHtml } from "../utils/utils.js";
 
 const factions = {};
-
-class FactionBase {
+export { factions };
+export class FactionBase {
   constructor(name, msReq) {
     this.name = name;
     this.msReq = msReq;
     this.milestones = 0;
     this.count = 0;
+    this.goals = [];
+    this.goalsCompleted = [];
+    console.log("init");
     this.textBox = new TextChannel(
       name,
+      name,
       100,
-      2000,
+      1,
       (msg) => {
         return {
-          isCorrect: this.isCorrectCount(msg),
+          isCorrect: this.isCorrectCount(msg)
         };
       },
       (i) => {
@@ -31,24 +35,21 @@ class FactionBase {
         return ele;
       }
     );
-    this.textBox.onMessage((i) => this.doCount(i));
+    this.textBox.on((i) => this.doCount(i), "message");
     factions[name] = this;
   }
   // abstracts
-  isValidCount(count); //XX, Ones, Factorial
-  
-  parseCount(count); //XX, Ones, Factorial
-  
-  get nextCount(){} //???
-  
-  onMilestone(); //All Factions
-  
-  
-  goalCheck(); //All Factions
-  
-  spireBoost(); //All Factions
-  
-//defined
+  isValidCount(count) {} //XX, Ones, Factorial
+
+  parseCount(count) {} //XX, Ones, Factorial
+
+  get nextCount() {} //???
+
+  spireBoost() {} //All Factions
+
+  onMilestone() {}
+
+  //defined
   updateMilestones() {
     const oldMilestone = this.milestones;
     while (this.count >= this.milestoneNextAt) {
@@ -64,40 +65,41 @@ class FactionBase {
       this.isValidCount(count) && this.nextCount === this.parseCount(count)
     );
   }
+
+  updateGoals() {
+    for (const [key, goal] of this.goals.entries()) {
+      if (goal() && !this.goalsCompleted.includes(key))
+        this.goalsCompleted.push(key);
+    }
+  }
+
   doCount(count) {
     if (this.isCorrectCount(count)) {
       this.count = this.nextCount;
-      console.log(count);
       this.updateMilestones();
+      this.updateGoals();
     }
   }
 
   get milestoneNextAt() {
     return this.msReq(this.milestones);
   }
-  
-  spireCheck(){
-      isSpire = goals.every(element => element === true);
+
+  get milestoneRewards() {
+    return {};
+  }
+
+  get isSpire() {
+    return this.goalsCompleted.length === this.goals.length;
   }
 }
-class FakeFaction extends FactionBase {
-  constructor() {
-    super("Fake Faction", (x) => Math.pow(x + 1, 2));
-  }
-  isValidCount(count) {
-    return count === this.nextCount.toString();
-  }
-  parseCount(count) {
-    return Number(count);
-  }
-  get nextCount() {
-    return this.count + 1;
-  }
-}
-const facInstance = new FakeFaction();
+
 class FactionDisplay extends HTMLElement {
   updateHTML(count) {
-    this.info.innerHTML = `Count: ${this.faction.count}`;
+    this.info.innerHTML = `Count: ${this.faction.count}<br>
+    Next count: ${this.faction.nextCount}<br>
+    Next milestone: ${this.faction.milestoneNextAt}<br>
+    Current amount of milestones: ${this.faction.milestones}`;
   }
   connectedCallback() {
     if (!this.isConnected) return;
@@ -113,14 +115,12 @@ class FactionDisplay extends HTMLElement {
 
     // RE: why do we need setAttribute?
     chatInstance.setAttribute("name", name);
-
+    console.log("faction go boom");
     root.append(chatInstance, this.info);
     this.shadowRoot.append(root);
-    this.faction.textBox.onMessage((i) => this.updateHTML(i));
+
+    this.faction.textBox.on((i) => this.updateHTML(i), "message");
     this.updateHTML("");
-  }
-  constructor() {
-    super();
   }
 }
 
