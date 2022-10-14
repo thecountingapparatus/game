@@ -1,12 +1,13 @@
-import { FactionBase } from "./faction.js";
+import { FactionBase } from "./factions.js";
 import { xxCount } from "./xx.js";
 
 class CountFaction extends FactionBase {
   //Constructor
   constructor() {
     super("Classic", (x) =>
-      Math.pow(10, Math.pow(x + 1, xxCount.milestoneReduction))
+      Math.ceil(Math.pow(10, Math.pow(x + 1, xxCount.milestoneReduction)))
     );
+    this.hasChal = false;
     this.rewardOneUsed = 0;
     this.spireEffect = 1;
     this.goals = [
@@ -23,12 +24,16 @@ class CountFaction extends FactionBase {
     return this.count + Math.max(xxCount.effectiveX, 1);
   }
 
-  isCorrectCount(count) {
-    return count === this.nextCount.toString();
-  }
-
   parseCount(count) {
     return Number(count);
+  }
+  
+  doCount(count) {
+    if (this.isCorrectCount(count)) {
+      this.count = this.nextCount;
+      this.updateMilestones();
+      this.updateGoals();
+    }
   }
 
   get milestoneRewards() {

@@ -1,64 +1,59 @@
-import { FactionBase } from "./faction.js";
-
-/*function getEffectiveMilestones(){
-  let effectiveMilestones = 0;
-  for (const value of Object.values(globalInfo.factions)) {
-    if(["Letter", "Factorial", "Matrix", "Function"].includes(value.name))
-      effectiveMilestones -= value.milestone;
-  	else effectiveMilestones += value.milestone;
-  }
-  return effectiveMilestones
-}
-function getTotalMilestones(){
-  let totalMilestones = 0;
-  for (const value of Object.values(globalInfo.factions)) {
-  	totalMilestones += value.milestone;
-  }
-  return totalMilestones
-}
-function updateMilestoneReduction() {
-    //updates milestone scaling reduction on each milestone
-	let effectiveMilestones = getEffectiveMilestones()
-  milestoneReduction = Math.pow(1/xxCount.logProd, Math.max(1/(effectiveMilestones+1),1));
-  document.getElementById("milestoneReductionText").innerHTML = "Milestone reduction: " + milestoneReduction.toFixed(2);
-  for (const value of Object.values(globalInfo.factions)) {
-  	value.checkMilestoneReq();
-  }
-}
-
-let milestoneReduction = 1;*/
+import { FactionBase } from "./factions.js";
+import { Functions } from "../functions/functionClass.js";
 
 class XxFaction extends FactionBase {
   constructor() {
-    // testing testing
-    //okay?
-    super("X X", (x) => Math.pow(x, Math.pow(x, this.milestoneReduction)));
+    super("X X", (x) => Math.pow(x+1, Math.pow(x+1, this.milestoneReduction)));
     this.challenges = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    this.hasChal = true;
     this.rawX = 1;
     this.effectiveX = 1;
     this.goals = [
       () => this.rawX >= 4,
       () => this.challenges[0] >= 100,
       () => this.challenges[7] >= 314,
-      () => 1 /*Average of all R1 factions/challenges*/ >= 5000,
+      () => this.avg >= 5000,
       () => this.rawX >= 10
     ];
   }
 
-  get nextCount() {
-    return this.count + 1;
-  }
+  //Counting & Milestones
 
-  get milestoneReduction() {
-    return 1; // placeholder for now
+  doCount(count) {
+    if (this.isCorrectCount(count)) {
+      this.count = this.nextCount;
+      this.updateMilestones();
+      this.updateGoals();
+    }
   }
-
+  
+  get milestoneReduction(){
+    return 1;
+  }
+  
+  parseCount(count) {
+    return Number(count);
+  }
+  
+  updateMilestones() {
+    const oldMilestone = this.milestones;
+    while (this.count >= this.milestoneNextAt) {
+      this.milestones++;
+      
+    }
+    if (this.milestones > oldMilestone) {
+      this.onMilestone();
+    }
+    this.effectiveX = this.milestones+1;
+    this.rawX = this.milestones+1;
+  }
+  
   get challengeReward() {
     let logProd = 1;
     for (const chal of this.challenges) {
       logProd *= Math.log10(chal + 1) + 1;
     }
-    return Math.Pow(1 / logProd, 1 /*/effectiveMilestones*/);
+    return Math.pow(1/logProd, Math.max(1/(1+this.effectiveMilestones),1));
   }
 }
 export const xxCount = new XxFaction();
