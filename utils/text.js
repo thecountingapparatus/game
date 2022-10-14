@@ -1,3 +1,5 @@
+import {EMOJI} from './constants.js'
+ 
 const channels = {};
 
 export class TextChannel {
@@ -42,7 +44,7 @@ export class TextChannel {
   on(func, type) {
     this.handlers.push({
       type,
-      func
+      func,
     });
   }
   isSupportedHandler(type, item) {
@@ -73,7 +75,7 @@ export class TextChannel {
       msg,
       num: this.msgCounter,
       bot,
-      ...this.extraData(msg)
+      ...this.extraData(msg),
     });
     this.invokeHandlers("message", msg);
     if (this.messages.length > this.max) {
@@ -87,6 +89,13 @@ export function ce(n) {
   return document.createElement(n);
 }
 
+export function addEmoji(safeString) {
+  for (const emoji of EMOJI) {
+    const regex = new RegExp(`:${emoji.name}:`, "g")
+    safeString = safeString.replace(regex, emoji.src)
+  }
+  return safeString
+}
 class TextChannelDisp extends HTMLElement {
   updateText() {
     // oh shoot js injection
@@ -100,7 +109,7 @@ class TextChannelDisp extends HTMLElement {
     });
     [...this.texts.childNodes].at(-1).scrollIntoView({
       behavior: "smooth",
-      block: "end"
+      block: "end",
     });
   }
   sendText() {
@@ -118,7 +127,6 @@ class TextChannelDisp extends HTMLElement {
   connectedCallback() {
     if (!this.isConnected) return;
     this.attachShadow({ mode: "open" });
-    console.log(JSON.stringify(channels), this.getAttribute("name"));
     this.textInstance = channels[this.getAttribute("name")];
     // console.log(this.getAttribute("name"), channels.Chat, this.textInstance);
 

@@ -1,11 +1,12 @@
-import { FactionBase } from "./faction.js";
+import { FactionBase, factions } from "./factions.js";
 import { basicCount } from "./count.js";
 import { xxCount } from "./xx.js";
 import { onesCount } from "./ones.js";
-import { factions } from "./faction.js";
+
 class TreeFaction extends FactionBase {
   constructor() {
-    super("Tree", (x) => Math.pow(x, Math.pow(2, xxCount.milestoneReduction)));
+    super("Tree", (x) => Math.ceil(Math.pow(x+1, Math.pow(2, xxCount.milestoneReduction))));
+    this.hasChal = false;
     this.rewardUsed = 0;
     this.goals = [
       () => this.milestones >= 25,
@@ -14,13 +15,10 @@ class TreeFaction extends FactionBase {
       () => this.rewardUsed >= 50,
       () => this.grid >= 10
     ];
-    this.grid = 0;
+    this.textBox.max = 1;
   }
 
   //Counts & Milestones
-  get nextCount() {
-    return this.count + 1;
-  }
 
   doCount(count) {
     if (this.isCorrectCount(count)) {
@@ -31,6 +29,10 @@ class TreeFaction extends FactionBase {
     }
   }
 
+  parseCount(count) {
+    return Number(count);
+  }
+  
   get milestoneRewards() {
     return {
       one: basicCount.spireEffect * this.milestones
@@ -49,10 +51,11 @@ class TreeFaction extends FactionBase {
   get slowmode() {
     return 86400 * Math.pow(0.75, onesCount.milestones);
   }
-
+  
+  get grid() {
+    return Math.ceil(Math.sqrt(this.count))
+  }
   updateGrid() {
-    this.grid = Math.ceil(Math.sqrt(this.count));
-
     for (const value of Object.values(factions)) {
       value.textBox.length = (this.grid + 1) * (onesCount.milestones + 1);
     }

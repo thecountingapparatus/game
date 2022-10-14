@@ -1,5 +1,5 @@
 import { xxCount } from "./xx.js";
-import { FactionBase } from "./faction.js";
+import { FactionBase } from "./factions.js";
 
 export function gamma(z) {
   const g = 7;
@@ -22,7 +22,7 @@ export function gamma(z) {
     let x = C[0];
     for (let i = 1; i < g + 2; i++) x += C[i] / (z + i);
 
-    var t = z + g + 0.5;
+    const t = z + g + 0.5;
     return Math.sqrt(2 * Math.PI) * Math.pow(t, z + 0.5) * Math.exp(-t) * x;
   }
 }
@@ -30,18 +30,21 @@ export function gamma(z) {
 class FactorialFaction extends FactionBase {
   constructor() {
     super("Factorial", (x) =>
-      gamma(Math.pow(x + 1, xxCount.milestoneReduction))
+      Math.ceil(gamma(Math.pow(x + 2, xxCount.milestoneReduction))-0.0000001)//gamma isn't exact so the -0.0000001 prevents weird floating point things
     );
+    this.challenges = [0, 0, 0];
+    this.hasChal = true;
     this.challengeReward = Math.floor(
       Math.pow(
         this.challenges[0] + this.challenges[1] + this.challenges[2],
         1 / 2
       )
     );
-    this.challenges = [0, 0, 0];
+    
   }
-  get nextCount() {
-    return this.count + 1;
+  
+  parseCount(count) {
+    return Number(count);
   }
 }
 export const factorialCount = new FactorialFaction();
